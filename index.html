@@ -55,85 +55,88 @@
         var tmpl = $('[data-tmpl="list"]').html();
         var $result = $("#result");
 
+        var today = new Date();
+        var to = ax5.util.date(today, {"return": "yyyy-MM-dd"});
+        var from = ax5.util.date(today, {"add": {d: -7}, "return": "yyyy-MM-dd"});
+
+        var paintResponse = function (res) {
+            if (res.message) {
+                myToast.push(res.message);
+            }
+
+            if (res.message) {
+                myToast.push(res.message);
+            } else {
+                myToast.push("최신 데이터를 받아 목록을 갱신하였습니다.");
+            }
+
+            list = [];
+
+            var listMap = {};
+            res.forEach(function (n) {
+                if (n.type == "PushEvent" || n.type == "CreateEvent") {
+
+                    if(ax5.util.dday(new Date(n.created_at), {today: to}) > -8) {
+
+                        if (listMap[n.repo.name]) {
+                            listMap[n.repo.name].push(n);
+                        }
+                        else {
+                            listMap[n.repo.name] = [n];
+                        }
+                    }
+                }
+            });
+
+            for (var k in listMap) {
+
+                var commits = [];
+                var _msg = "";
+                listMap[k].forEach(function (l) {
+                    if (l.payload && l.payload.commits) {
+                        l.payload.commits.forEach(function (commit) {
+                            if (commit.message.substring(0, 28) != "Merge remote-tracking branch") {
+                                if (_msg != commit.message.trim()) {
+                                    commits.push({url: commit.url.replace("https://api.", "https://").replace("repos/", ""), message: commit.message, created_at: l.created_at});
+                                    _msg = commit.message.trim();
+                                }
+                            }
+                        });
+                    } else if (l.payload) {
+                        if (l.type == "CreateEvent" && !l.payload.ref) {
+
+
+                            commits.push({url: l.repo.url, message: "Repository Created", created_at: l.created_at});
+                        }
+                    }
+                });
+
+                list.push({
+                    repoName: k,
+                    commits: commits,
+                    commitCount: commits.length
+                });
+            }
+
+            $result.html(ax5.mustache.render(tmpl, {list: list}));
+
+
+        }
 
         var getContent = function () {
-
             $updateTime.html((new Date()).toString());
-
-            var today = new Date();
-            var to = ax5.util.date(today, {"return": "yyyy-MM-dd"});
-            var from = ax5.util.date(today, {"add": {d:-7}, "return": "yyyy-MM-dd"});
 
             var list = [];
             $.ajax({
                 url: ax5.util.string(apiUrl + "?per_page=2000&from={0}&to={1}").format(from, to),
                 crossDomain: true, type: 'GET', data: {},
-                success: function (res) {
-                    if (res.message) {
-                        myToast.push(res.message);
-                    }
-
-                    if (res.message) {
-                        myToast.push(res.message);
-                    } else {
-                        myToast.push("최신 데이터를 받아 목록을 갱신하였습니다.");
-                    }
-
-                    list = [];
-
-                    var listMap = {};
-                    res.forEach(function (n) {
-                        if (n.type == "PushEvent" || n.type == "CreateEvent") {
-                            if (listMap[n.repo.name]) {
-                                listMap[n.repo.name].push(n);
-                            }
-                            else {
-                                listMap[n.repo.name] = [n];
-                            }
-                        }
-                    });
-
-                    for (var k in listMap) {
-
-                        var commits = [];
-                        var _msg = "";
-                        listMap[k].forEach(function (l) {
-                            if (l.payload && l.payload.commits) {
-                                l.payload.commits.forEach(function (commit) {
-                                    if (commit.message.substring(0, 28) != "Merge remote-tracking branch") {
-                                        if (_msg != commit.message.trim()) {
-                                            commits.push({url: commit.url.replace("https://api.", "https://").replace("repos/", ""), message: commit.message, created_at: l.created_at});
-                                            _msg = commit.message.trim();
-                                        }
-                                    }
-                                });
-                            } else if (l.payload) {
-                                if (l.type == "CreateEvent" && !l.payload.ref) {
-
-
-                                    commits.push({url: l.repo.url, message: "Repository Created", created_at: l.created_at});
-                                }
-                            }
-                        });
-
-                        list.push({
-                            repoName: k,
-                            commits: commits,
-                            commitCount: commits.length
-                        });
-                    }
-
-                    $result.html(ax5.mustache.render(tmpl, {list: list}));
-
-
-                },
+                success: paintResponse,
                 error: function (jqXHR, textStatus, errorThrown) {
                     myToast.push("API응답오류 발생. gitHub에 너무 많은 요청을 하여 API가 작동하지 않습니다. 잠시후 다시 시도해 보세요. ");
                 }
 
             });
         };
-
 
         getContent();
         setInterval(function () {
