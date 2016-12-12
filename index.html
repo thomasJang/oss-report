@@ -62,7 +62,7 @@
 
             var today = new Date();
             var from = ax5.util.date(today, {"return": "yyyy-MM-dd"});
-            var to = ax5.util.date(today, {"add": -7, "return": "yyyy-MM-dd"});
+            var to = ax5.util.date(today, {"add": {d:-7}, "return": "yyyy-MM-dd"});
 
             var list = [];
             $.ajax({
