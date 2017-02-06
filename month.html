@@ -56,8 +56,8 @@
         var $result = $("#result");
 
         var today = new Date();
-        var to = ax5.util.date(today, {"return": "yyyy-MM-dd"});
-        var from = ax5.util.date(today, {"add": {d: -7}, "return": "yyyy-MM-dd"});
+        var to = "2016-01-02";
+        var from = "2016-01-31";
 
         var paintResponse = function (res) {
             if (res.message) {
@@ -104,8 +104,6 @@
                         });
                     } else if (l.payload) {
                         if (l.type == "CreateEvent" && !l.payload.ref) {
-
-
                             commits.push({url: l.repo.url, message: "Repository Created", created_at: l.created_at});
                         }
                     }
@@ -119,8 +117,6 @@
             }
 
             $result.html(ax5.mustache.render(tmpl, {list: list}));
-
-
         }
 
         var getContent = function () {
