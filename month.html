@@ -38,9 +38,30 @@
     <div id="result"></div>
 </div>
 <script type="text/html" data-tmpl="list">
-
-    {{#list}}<p class="project"><h4>{{repoName}} ({{commitCount}}건의 활동내역)</h4>{{#commits}}<a href="{{url}}" target="_blank">{{{message}}}</a> / <!--[{{created_at}}]-->{{/commits}}</p><hr/>{{/list}}
-
+    <h6>활동 기간 : {{to}} ~ {{from}}</h6>
+    {{#list}}
+    <p class="project">
+        <b>{{repoName}} ({{commitCount}}건의 활동내역)</b><br/>
+    <table>
+        <thead>
+        <tr style="background: #eee;">
+            <td style="padding: 3px;border: 1px solid #ccc;font-size:11px;">날짜</td>
+            <td style="padding: 3px;border: 1px solid #ccc;font-size:11px;">커밋 메세지</td>
+            <td style="padding: 3px;border: 1px solid #ccc;font-size:11px;">링크</td>
+        </tr>
+        </thead>
+        <tbody>
+        {{#commits}}
+        <tr>
+            <td style="padding: 3px;border: 1px solid #ccc;font-size:11px;">{{created_at}}</td>
+            <td style="padding: 3px;border: 1px solid #ccc;font-size:11px;">{{{message}}}</td>
+            <td style="padding: 3px;border: 1px solid #ccc;font-size:11px;"><a href="{{url}}" target="_blank">gitHub</a></td>
+        </tr>
+        {{/commits}}
+        </tbody>
+    </table>
+    </p>
+    {{/list}}
 </script>
 
 <script language="javascript">
@@ -116,7 +137,7 @@
                 });
             }
 
-            $result.html(ax5.mustache.render(tmpl, {list: list}));
+            $result.html(ax5.mustache.render(tmpl, {to: to, from: from, list: list}));
         }
 
         var getContent = function () {
