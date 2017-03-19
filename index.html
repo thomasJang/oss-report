@@ -41,24 +41,16 @@
     <h6>활동 기간 : {{to}} ~ {{from}}</h6>
     {{#list}}<p class="project">
         <b>{{repoName}} ({{commitCount}}건의 활동내역)</b><br/>
-    <table>
-        <thead>
-        <tr style="background: #eee;">
-            <td style="padding: 3px;border: 1px solid #ccc;font-size:11px;">날짜</td>
-            <td style="padding: 3px;border: 1px solid #ccc;font-size:11px;">커밋 메세지</td>
-            <td style="padding: 3px;border: 1px solid #ccc;font-size:11px;">링크</td>
-        </tr>
-        </thead>
-        <tbody>
+    <ul>
         {{#commits}}
-        <tr>
-            <td style="padding: 3px;border: 1px solid #ccc;font-size:11px;">{{created_at}}</td>
-            <td style="padding: 3px;border: 1px solid #ccc;font-size:11px;">{{{message}}}</td>
-            <td style="padding: 3px;border: 1px solid #ccc;font-size:11px;"><a href="{{url}}" target="_blank">gitHub</a></td>
-        </tr>
+        <li style="padding: 3px;font-size:11px;">
+            {{created_at}} :
+            {{{message}}}
+            <a href="{{url}}" target="_blank">gitHub</a>
+        </li>
         {{/commits}}
-        </tbody>
-    </table></p>{{/list}}
+    </ul>
+    </p>{{/list}}
 </script>
 
 <script language="javascript">
