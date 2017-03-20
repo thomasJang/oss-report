@@ -116,7 +116,7 @@
                 listMap[k].forEach(function (l) {
                     if (l.payload && l.payload.commits) {
                         l.payload.commits.forEach(function (commit) {
-                            if (commit.message.substring(0, 28) != "Merge remote-tracking branch") {
+                            if (commit && commit.message.substring(0, 28) != "Merge remote-tracking branch") {
                                 if (_msg != commit.message.trim()) {
                                     commits.push({url: commit.url.replace("https://api.", "https://").replace("repos/", ""), message: commit.message, created_at: l.created_at});
                                     _msg = commit.message.trim();
