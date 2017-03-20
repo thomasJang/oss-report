@@ -55,6 +55,7 @@
 
 <script language="javascript">
     var apiUrl = "https://api.github.com/users/thomasjang/events/public";
+    var authorName = "Thomas Jang";
     $(function () {
         var myToast = new ax5.ui.toast({
             theme: "danger",
@@ -107,7 +108,11 @@
                         l.payload.commits.forEach(function (commit) {
                             if (commit && commit.message.substring(0, 28) != "Merge remote-tracking branch") {
                                 if (_msg != commit.message.trim()) {
-                                    commits.push({url: commit.url.replace("https://api.", "https://").replace("repos/", ""), message: commit.message, created_at: l.created_at});
+                                    if (commit.author.name == authorName) {
+                                        var commitTitle = commit.message.split("\n")[0];
+
+                                        commits.push({url: commit.url.replace("https://api.", "https://").replace("repos/", ""), message: commitTitle, created_at: l.created_at});
+                                    }
                                     _msg = commit.message.trim();
                                 }
                             }
@@ -116,7 +121,8 @@
                         if (l.type == "CreateEvent" && !l.payload.ref) {
 
 
-                            commits.push({url: l.repo.url, message: "Repository Created", created_at: l.created_at});
+                            if (commit.author.name == authorName)
+                                commits.push({url: l.repo.url, message: "Repository Created", created_at: l.created_at});
                         }
                     }
                 });
