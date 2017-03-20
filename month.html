@@ -124,7 +124,7 @@
                             }
                         });
                     } else if (l.payload) {
-                        if (l.type == "CreateEvent" && !l.payload.ref) {
+                        if (commit && l.type == "CreateEvent" && !l.payload.ref) {
                             commits.push({url: l.repo.url, message: "Repository Created", created_at: l.created_at});
                         }
                     }

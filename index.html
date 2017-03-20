@@ -38,8 +38,7 @@
     <div id="result"></div>
 </div>
 <script type="text/html" data-tmpl="list">
-    <h6>활동 기간 : {{from}} ~ {{to}}</h6>
-    {{#list}}<p class="project">
+    <h6>활동 기간 : {{from}} ~ {{to}}</h6>{{#list}}<p class="project">
         <b>{{repoName}} ({{commitCount}}건의 활동내역)</b><br/>
     <ul>
         {{#commits}}
@@ -49,8 +48,7 @@
             <a href="{{url}}" target="_blank">gitHub</a>
         </li>
         {{/commits}}
-    </ul>
-    </p>{{/list}}
+    </ul></p>{{/list}}
 </script>
 
 <script language="javascript">
@@ -119,10 +117,9 @@
                         });
                     } else if (l.payload) {
                         if (l.type == "CreateEvent" && !l.payload.ref) {
-
-
-                            if (commit.author.name == authorName)
+                            if (commit && commit.author.name == authorName) {
                                 commits.push({url: l.repo.url, message: "Repository Created", created_at: l.created_at});
+                            }
                         }
                     }
                 });
